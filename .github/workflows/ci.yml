@@ -1,15 +1,12 @@
 name: CI - Node.js backend with Postgres
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:15
@@ -24,20 +21,47 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
+      - name: Create package.json
+        run: |
+          mkdir -p backend
+          echo '{
+            "name": "backend",
+            "version": "1.0.0",
+            "main": "index.js",
+            "directories": {
+              "test": "tests"
+            },
+            "keywords": [],
+            "author": "",
+            "license": "ISC",
+            "description": "",
+            "dependencies": {
+              "dotenv": "^16.4.7",
+              "express": "^5.1.0",
+              "zod": "^3.24.3"
+            },
+            "devDependencies": {
+              "jest": "^29.7.0",
+              "supertest": "^7.1.0"
+            },
+            "scripts": {
+              "test": "jest"
+            }
+          }' > backend/package.json
+          
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-
+          
       - name: Install dependencies
         run: npm install
         working-directory: backend
-
+        
       - name: Run tests
         run: npm test
         working-directory: backend
