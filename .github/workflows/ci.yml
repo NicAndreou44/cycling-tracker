@@ -1,12 +1,15 @@
 name: CI - Node.js backend with Postgres
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
@@ -21,33 +24,20 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with: 
-            path: cycling-tracker
-       
-      - name: Debug directory structure
-        run: |
-         echo "Current working directory:"
-          pwd
-          echo "Directory listing:"
-          ls -la
-          echo "Looking for backend directory:"
-          find . -name "backend" -type d
-          echo "Looking for package.json files:"
-          find . -name "package.json"
-          find . -type f -name "package.json"
-          
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          
+
       - name: Install dependencies
         run: npm install
         working-directory: backend
-        
+
       - name: Run tests
         run: npm test
         working-directory: backend
