@@ -25,6 +25,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
        
+<<<<<<< HEAD
       - name: Create package.json
         run: |
           mkdir -p backend
@@ -62,18 +63,27 @@ jobs:
             });
           });' > backend/tests/simple.test.js
          
+=======
+>>>>>>> 513ba22 (Final sync before rebase)
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
          
       - name: Install dependencies
+<<<<<<< HEAD
         run: npm install
         working-directory: backend
        
       - name: Run tests
         run: npm test
         working-directory: backend
+=======
+        run: cd backend && npm install
+        
+      - name: Run tests
+        run: cd backend && npm test
+>>>>>>> 513ba22 (Final sync before rebase)
         env:
           DB_USER: postgres
           DB_PASSWORD: Polako4!
