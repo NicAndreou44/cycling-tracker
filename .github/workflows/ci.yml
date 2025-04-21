@@ -34,10 +34,33 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: cd backend && npm install
+        run: npm install
+        working-directory: backend
+
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+
+      - name: Create test table
+        run: |
+          psql -h localhost -U postgres -d cycling_tracker -c "
+          CREATE TABLE IF NOT EXISTS rides (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            distance_km INTEGER NOT NULL,
+            duration_minutes INTEGER,
+            type VARCHAR(50),
+            notes TEXT
+          );"
+        env:
+          PGPASSWORD: Polako4!
 
       - name: Run tests
-        run: cd backend && npm test
+        run: npm test
+        working-directory: backend
         env:
           DB_USER: postgres
           DB_PASSWORD: Polako4!
