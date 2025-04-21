@@ -38,11 +38,11 @@ jobs:
           
       - name: Install dependencies
         run: npm install
-        working-directory: ./backend
+        working-directory: backend
         
       - name: Run tests
         run: npm test
-        working-directory: ./backend
+        working-directory: backend
         env:
           DB_USER: postgres
           DB_PASSWORD: Polako4!
