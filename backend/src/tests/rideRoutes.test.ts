@@ -1,6 +1,8 @@
-const request = require("supertest");
-const app = require("../../server"); 
-const db = require("../db");
+import request from 'supertest';
+import app from '../../server';
+import db from '../db';
+
+
 
 beforeEach(async () => {
   await db.query("DELETE FROM rides");
@@ -14,7 +16,7 @@ describe("POST /rides with Zod middleware", () => {
   it("should return 400 when required fields are missing", async () => {
     const res = await request(app).post("/rides").send({
       name: "Invalid Ride"
-      // missing distanceKm
+      
     });
 
     expect(res.status).toBe(400);
@@ -31,7 +33,7 @@ describe("POST /rides with Zod middleware", () => {
       notes: "Good test"
     });
 
-    expect(res.status).toBe(201); // ✅ was 200, should be 201
+    expect(res.status).toBe(201); 
     expect(res.body.name).toBe("Zod Approved");
   });
 });
