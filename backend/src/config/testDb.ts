@@ -1,13 +1,16 @@
-// src/config/testDb.ts
+// backend/src/config/testDb.ts
 import { Pool } from "pg";
 import dotenv from "dotenv";
-dotenv.config({ path: __dirname + "/../../.env" });
+import path from "path";
 
-const pool = new Pool({ /* same config */ });
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
-pool.connect()
-  .then(() => console.log("✅ Test DB connected"))
-  .catch((err: any) => console.error("❌ Test DB connection failed:", err));
-
+const pool = new Pool({
+  user:     process.env.DB_USER,
+  host:     process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port:     Number(process.env.DB_PORT),
+});
 
 export default pool;

@@ -1,98 +1,101 @@
 import request from 'supertest';
-import app from '../../server';
-import db from '../db';
-
-
+import app from '../server';
+import db from '../config/testDb';
 
 beforeEach(async () => {
   await db.query("DELETE FROM rides");
 });
 
 afterAll(async () => {
-  await db.end();
-});
+  try {
+    await db.end();
+  } catch (err) {
+    console.error("Error closing test DB connection:", err);
+  }
+}, 10000);
 
-describe("POST /rides with Zod middleware", () => {
+describe("POST /api/rides with Zod middleware", () => {
   it("should return 400 when required fields are missing", async () => {
-    const res = await request(app).post("/rides").send({
+    const res = await request(app).post("/api/rides").send({
       name: "Invalid Ride"
-      
+     
     });
-
     expect(res.status).toBe(400);
     expect(res.body.error).toBeDefined();
     expect(res.body.error[0].message).toMatch(/required/i);
   });
 
   it("should succeed with valid data", async () => {
-    const res = await request(app).post("/rides").send({
+    const res = await request(app).post("/api/rides").send({
       name: "Zod Approved",
       distanceKm: 30,
       duration_minutes: 70,
       type: "cycling",
       notes: "Good test"
     });
-
-    expect(res.status).toBe(201); 
+    expect(res.status).toBe(201);
     expect(res.body.name).toBe("Zod Approved");
   });
 });
 
-describe("PUT /rides/:id with validation", () => {
+describe("PUT /api/rides/:id with validation", () => {
   it("should return 400 for missing required fields", async () => {
-    const addRes = await request(app).post("/rides").send({
+    const addRes = await request(app).post("/api/rides").send({
       name: "To be updated",
       distanceKm: 10,
       duration_minutes: 30,
       type: "cycling",
       notes: "initial"
     });
-
     const rideId = addRes.body.id;
-
-    const res = await request(app).put(`/rides/${rideId}`).send({
+    const res = await request(app).put(`/api/rides/${rideId}`).send({
       name: "Still broken"
-      // missing distanceKm
+ 
     });
-
     expect(res.status).toBe(400);
     expect(res.body.error).toBeDefined();
   });
 
   it("should return 404 if ride ID does not exist", async () => {
-    const res = await request(app).put("/rides/999999").send({
+    const res = await request(app).put("/api/rides/999999").send({
       name: "Does not exist",
       distanceKm: 50,
       duration_minutes: 60,
       type: "cycling",
       notes: "invalid id"
     });
-
     expect(res.status).toBe(404);
-    expect(res.body.error).toMatch(/ride not found/i);
+    expect(res.body.error).toMatch(/Ride not found/i);
   });
 });
 
-describe("DELETE /rides/:id with validation", () => {
+describe("DELETE /api/rides/:id with validation", () => {
   it("should return 404 if ride ID does not exist", async () => {
-    const res = await request(app).delete("/rides/999999");
+    const res = await request(app).delete("/api/rides/999999");
     expect(res.status).toBe(404);
-    expect(res.body.error).toMatch(/ride not found/i);
+    expect(res.body.error).toMatch(/Ride not found/i);
   });
 
   it("should successfully delete a ride by ID", async () => {
-    const addRes = await request(app).post("/rides").send({
+    const addRes = await request(app).post("/api/rides").send({
       name: "To be deleted",
       distanceKm: 15,
       duration_minutes: 45,
       type: "cycling",
       notes: "bye"
     });
-
     const rideId = addRes.body.id;
-
-    const deleteRes = await request(app).delete(`/rides/${rideId}`);
+    const deleteRes = await request(app).delete(`/api/rides/${rideId}`);
     expect(deleteRes.status).toBe(200);
     expect(deleteRes.body.id).toBe(rideId);
   });
+});
+it('should reach test endpoint', async () => {
+  const res = await request(app).get('/test-endpoint');
+  expect(res.status).toBe(200);
+});
+
+it("should reach debug endpoint", async () => {
+  const res = await request(app).get("/test-debug");
+  expect(res.status).toBe(200);
 });

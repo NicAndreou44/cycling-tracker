@@ -1,19 +1,17 @@
-const {
+import {
   getRides,
   addRide,
   getRideById,
   updateRideById,
   deleteRideById,
-} = require("../services/rideService");
-
-const db = require("../db"); // update path if needed
+} from "../services/rideService";
+import db from "../config/testDb";
 
 beforeEach(async () => {
   await db.query("DELETE FROM rides");
-
   await db.query(`
     INSERT INTO rides (name, distance_km, duration_minutes, type, notes)
-    VALUES 
+    VALUES
       ('Morning Ride', 18, 60, 'cycling', 'Morning routine'),
       ('Evening Ride', 22, 75, 'cycling', 'Evening cooldown'),
       ('City Ride', 12, 40, 'cycling', 'Errands');
@@ -21,8 +19,12 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await db.end();
-});
+  try {
+    await db.end();
+  } catch (err) {
+    console.error("Error closing test DB connection:", err);
+  }
+}, 10000);
 
 describe("getRides", () => {
   test("should return 3 rides from DB", async () => {
@@ -45,7 +47,6 @@ describe("addRide", () => {
       type: "cycling",
       notes: "Test notes"
     };
-
     const added = await addRide(newRide);
     expect(added).toHaveProperty("id");
     expect(added.name).toBe("Test Ride");
@@ -61,7 +62,7 @@ describe("getRideById", () => {
   });
 
   test("should throw an error when ID does not exist", async () => {
-    await expect(getRideById(9999)).rejects.toThrow("ride not found");
+    await expect(getRideById(9999)).rejects.toThrow("Ride not found");
   });
 });
 
@@ -74,16 +75,14 @@ describe("deleteRideById", () => {
       type: "cycling",
       notes: "Temp"
     });
-
     const deleted = await deleteRideById(added.id);
     expect(deleted.id).toBe(added.id);
-
     const rides = await getRides();
     expect(rides.find((r) => r.id === added.id)).toBeUndefined();
   });
 
   test("should throw an error if the ID does not exist", async () => {
-    await expect(deleteRideById(9999)).rejects.toThrow("ride not found");
+    await expect(deleteRideById(9999)).rejects.toThrow("Ride not found");
   });
 });
 
@@ -96,19 +95,27 @@ describe("updateRideById", () => {
       type: "cycling",
       notes: "Old"
     });
-
+   
     const updated = await updateRideById(added.id, {
       name: "Updated Ride",
       distanceKm: 10,
+      duration_minutes: 15,
+      type: "cycling",
+      notes: "Old"
     });
-
     expect(updated.name).toBe("Updated Ride");
     expect(updated.distanceKm).toBe(10);
   });
 
   test("should throw an error if the ride is not found", async () => {
     await expect(
-      updateRideById(99999, { name: "Doesn't exist" })
+      updateRideById(99999, {
+        name: "Doesn't exist",
+        distanceKm: 10,
+        duration_minutes: 30,
+        type: "cycling",
+        notes: "Test"
+      })
     ).rejects.toThrow("Ride not found");
   });
 });
