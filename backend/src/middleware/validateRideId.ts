@@ -1,4 +1,4 @@
-// src/middleware/validateRideId.ts
+
 import { RequestHandler } from "express";
 import { getRideById } from "../services/rideService";
 

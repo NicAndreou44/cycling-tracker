@@ -1,4 +1,4 @@
-// src/services/rideService.ts
+
 import pool from "../config/db";
 import { Ride, RideInput } from "../types/Rides";
 
