@@ -18,10 +18,6 @@ beforeEach(async () => {
   `);
 });
 
-afterAll(async () => {
-  await db.end();
-});
-
 describe("getRides", () => {
   test("should return 3 rides from DB", async () => {
     const rides = await getRides();
@@ -114,4 +110,7 @@ describe("updateRideById", () => {
       })
     ).rejects.toThrow("Ride not found");
   });
+});
+afterAll(async () => {
+  await db.end(); 
 });

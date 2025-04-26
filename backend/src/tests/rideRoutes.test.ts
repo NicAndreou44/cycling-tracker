@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../server';
 import db from '../config/testDb';
 
-let token: string;
+let token: string; 
 
 beforeAll(async () => {
   const res = await request(app)
@@ -19,6 +19,9 @@ beforeEach(async () => {
 afterAll(async () => {
   await db.end();
 });
+afterAll(async () => {
+  await new Promise(resolve => setTimeout(resolve, 500)); 
+});
 
 describe("POST /api/rides with Zod middleware", () => {
   it("should return 400 when required fields are missing", async () => {
@@ -26,7 +29,7 @@ describe("POST /api/rides with Zod middleware", () => {
       .post("/api/rides")
       .set("Authorization", `Bearer ${token}`)
       .send({ name: "Invalid Ride" });
-      
+
     expect(res.status).toBe(400);
     expect(res.body.error).toBeDefined();
     expect(res.body.error[0].message).toMatch(/required/i);
@@ -41,7 +44,7 @@ describe("POST /api/rides with Zod middleware", () => {
         distanceKm: 30,
         duration_minutes: 70,
         type: "cycling",
-        notes: "Good test"
+        notes: "Good test",
       });
 
     expect(res.status).toBe(201);
@@ -59,7 +62,7 @@ describe("PUT /api/rides/:id with validation", () => {
         distanceKm: 10,
         duration_minutes: 30,
         type: "cycling",
-        notes: "initial"
+        notes: "initial",
       });
 
     const rideId = addRes.body.id;
@@ -82,7 +85,7 @@ describe("PUT /api/rides/:id with validation", () => {
         distanceKm: 50,
         duration_minutes: 60,
         type: "cycling",
-        notes: "invalid id"
+        notes: "invalid id",
       });
 
     expect(res.status).toBe(404);
@@ -109,7 +112,7 @@ describe("DELETE /api/rides/:id with validation", () => {
         distanceKm: 15,
         duration_minutes: 45,
         type: "cycling",
-        notes: "bye"
+        notes: "bye",
       });
 
     const rideId = addRes.body.id;
@@ -123,8 +126,8 @@ describe("DELETE /api/rides/:id with validation", () => {
   });
 });
 
-it('should reach test endpoint', async () => {
-  const res = await request(app).get('/test-endpoint');
+it("should reach test endpoint", async () => {
+  const res = await request(app).get("/test-endpoint");
   expect(res.status).toBe(200);
 });
 
