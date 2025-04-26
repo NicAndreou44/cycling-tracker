@@ -1,5 +1,4 @@
-
-import { Router } from "express";
+import { Router, Request } from "express";
 import {
   getRides,
   addRide,
@@ -7,9 +6,16 @@ import {
   deleteRideById,
 } from "../services/rideService";
 import { validateRideData } from "../middleware/validateRideData";
-import { validateRideId }   from "../middleware/validateRideId";
+import { validateRideId } from "../middleware/validateRideId";
+import { authenticateJWT } from "../middleware/authmiddleware";
 
 const router = Router();
+router.use(authenticateJWT);
+
+
+interface RideRequest extends Request {
+  ride?: any;
+}
 
 router.get("/", async (req, res, next) => {
   try { res.json(await getRides()); }
@@ -21,7 +27,7 @@ router.post("/", validateRideData, async (req, res, next) => {
   catch (err) { next(err); }
 });
 
-router.get("/:id", validateRideId, (req, res) => {
+router.get("/:id", validateRideId, (req: RideRequest, res) => {
   res.json(req.ride);
 });
 

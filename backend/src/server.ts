@@ -1,12 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
+import authRouter from "./routes/authjwt";
 import ridesRouter from "./routes/rides";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-
+app.use("/api/auth", authRouter);
 
 app.get("/health", (_req, res) => {
   res.send("Healthy");
@@ -19,6 +20,7 @@ app.get('/test-endpoint', (_req, res) => {
 app.get("/test-debug", (_req, res) => {
   res.status(200).json({ message: "Debug endpoint working" });
 });
+
 
 
 app.use("/api/rides", ridesRouter);

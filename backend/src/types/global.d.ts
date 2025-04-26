@@ -1,10 +1,12 @@
-
-import { Ride } from "./Ride";
+import { Ride } from "../types/Rides"; 
 
 declare global {
   namespace Express {
     interface Request {
-      ride?: Ride;
+      ride?: Ride;    
+      user?: { userId: number }; 
     }
   }
 }
+
+export {};
