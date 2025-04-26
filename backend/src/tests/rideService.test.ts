@@ -19,12 +19,8 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  try {
-    await db.end();
-  } catch (err) {
-    console.error("Error closing test DB connection:", err);
-  }
-}, 10000);
+  await db.end();
+});
 
 describe("getRides", () => {
   test("should return 3 rides from DB", async () => {
@@ -95,7 +91,7 @@ describe("updateRideById", () => {
       type: "cycling",
       notes: "Old"
     });
-   
+
     const updated = await updateRideById(added.id, {
       name: "Updated Ride",
       distanceKm: 10,
