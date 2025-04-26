@@ -2,15 +2,19 @@ import request from 'supertest';
 import app from '../server';
 import db from '../config/testDb';
 
-let token: string; 
+let token: string;
 
 beforeAll(async () => {
   const res = await request(app)
     .post("/api/auth/login")
     .send({ email: "admin@example.com", password: "password123" });
 
+  if (!res.body.token) {
+    throw new Error("Failed to get token before running tests");
+  }
+
   token = res.body.token;
-});
+}, 15000); 
 
 beforeEach(async () => {
   await db.query("DELETE FROM rides");
@@ -18,8 +22,6 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await db.end();
-});
-afterAll(async () => {
   await new Promise(resolve => setTimeout(resolve, 500)); 
 });
 
