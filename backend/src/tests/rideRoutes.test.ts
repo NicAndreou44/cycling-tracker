@@ -1,10 +1,16 @@
-import request from 'supertest';
-import app from '../server';
-import db from '../config/testDb';
+import request from "supertest";
+import app from "../server";
+import db from "../config/testDb";
 
 let token: string;
 
 beforeAll(async () => {
+  await db.query(`
+    INSERT INTO users (email, password)
+    VALUES ('admin@example.com', '$2b$10$QnJ3pTle7fCKlx1q0zHgLOV48xYIjo61J20UzMmkxLRjc6z9Yj8dO')
+    ON CONFLICT (email) DO NOTHING;
+  `);
+
   const res = await request(app)
     .post("/api/auth/login")
     .send({ email: "admin@example.com", password: "password123" });
@@ -14,7 +20,7 @@ beforeAll(async () => {
   }
 
   token = res.body.token;
-}, 15000); 
+}, 15000);
 
 beforeEach(async () => {
   await db.query("DELETE FROM rides");
@@ -22,7 +28,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await db.end();
-  await new Promise(resolve => setTimeout(resolve, 500)); 
+  await new Promise(resolve => setTimeout(resolve, 500)); // avoid open handle warning
 });
 
 describe("POST /api/rides with Zod middleware", () => {
