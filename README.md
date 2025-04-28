@@ -1,43 +1,65 @@
-# cycling-tracker
-Thanks for visiting 
+Cycling Tracker
+Project Overview
+Thanks for visiting my Cycling Tracker project! This README reflects the current state of the project as of April 28, 2025.
+I'm building a feature-rich backend with Node.js and Express, implementing JWT authentication, validated via ZOD schema, and using AWS DynamoDB for data storage.
+The project aims to create a comprehensive platform for tracking physical activities, with a focus on cycling. The long-term vision includes a login system for real-world use, allowing users to track all their physical activities, gain insights, and find motivation for healthier lifestyles through personalized storytelling.
 
-I have been recruiting in IT for the last 4 years, but for the past 3 I’ve been deeply motivated to make the switch to a technical path. I never quite found the right time to commit until I visited the Latency Conference in Perth, Australia — and it sparked a motivation that hasn’t dimmed since.
 
-After consulting with developers I know and respect, I decided it was time to stop waiting and start building. I wanted to create something that I had genuine passion for, but also something that could evolve and scale technically over time.
+Getting Started
+Start the server locally:
+cd backend
+npm install
+npm start
+Then check health endpoint at: http://localhost:3000/health
+API Endpoints
+Authentication
 
-Choosing the Stack
+Register: POST http://localhost:3000/api/auth/register
+Login: POST http://localhost:3000/api/auth/login
 
-I sat down and decided on my technology stack based on what I’ve recruited heavily, what I was curious about, and where I see future potential.
+Rides
 
-Node.js — A modular, scalable runtime I’ve always enjoyed following through my work. It’s fast, flexible, and works well in full-stack environments, especially alongside AWS and React.
+Create Ride: POST http://localhost:3000/api/rides
+List All Rides: GET http://localhost:3000/api/rides
+Get Ride Details: GET http://localhost:3000/api/rides/:id
+Update Ride: PUT http://localhost:3000/api/rides/:id
+Delete Ride: DELETE http://localhost:3000/api/rides/:id
 
-PostgreSQL — I wanted to deepen my understanding of data structure and flow, and I knew this would also set me up for transitioning into DynamoDB later on.
+Current Tech Stack
 
-Zod — I chose Zod for validation because I plan to migrate this project to TypeScript. It complements TS well and keeps the schema management clean and predictable.
+Backend: Node.js (18+) & Express.js
+Validation: Zod
+Authentication: JWT
+Database: AWS DynamoDB
+Testing:
 
-Jest — I implemented testing within the first 2 days. I want testing to be a fundamental part of how I build. I'm testing each function and using that lens to better understand my backend logic.
+E2E Testing: Cypress
+Unit Testing: Jest
 
-CI/CD — I’ve just implemented the CI portion and will keep expanding into CD shortly. My goal is to understand DevOps workflows, container alignment, and how that integrates with cloud infrastructure.
 
-React (Coming Soon) — I chose React for the frontend because of its component-driven architecture, flexibility, and dominance in modern web development. I've recruited in the React ecosystem for years and I’m excited to finally use it myself when I get to the UI.
+CI/CD: GitHub Actions
 
-What’s Coming
+Current Features
 
-The plan is to:
+Full CRUD API with proper status codes (200/201) and error handling
+JWT secured endpoints
+DynamoDB integration
+Comprehensive test coverage:
 
-Migrate this project to TypeScript, because I value how it enhances modularity and maintainability.
+Jest unit tests for Schema, services, and route level
+Cypress API tests covering authentication, create, read, and delete flows
 
-Transition backend infrastructure to AWS Lambda, DynamoDB, and S3 — I’ve recruited these stacks for years and now want to understand them from the inside-out.
 
-Build a full serverless deployment pipeline with cloud-native architecture in mind.
+CI pipelines for automated testing
 
-Expand CI/CD workflows to include automated deploy and deeper test automation.
+Planned Features & Improvements
 
-How I'm Building
+Docker containerization (in progress)
+Frontend with either React.js or Angular (feedback welcome!)
+Reintegration of AWS Lambda and S3
+Strava API integration for importing ride data
+Enhanced storytelling features to provide insights and motivation
 
-This isn’t a plug-and-play build. I’m using the Feynman Technique numerous times a day — every morning and night — asking myself 30–40 questions per session about the codebase. I explain what each line does, how it works, and why I’m using it. I break it down piece by piece to ensure I can apply it in future projects and interviews.
-
-I built up to a working CI pipeline in just 9 days while working full-time. I ensure I understand each function, and if I feel weak in a concept, I deep dive until I’m clear on the how and why.
-
-Thanks again for checking this out. Sorry for the life story — I just wanted to share the journey behind the progress. If you’re a dev and see ways I could improve, I’d genuinely love the feedback. This is just the beginning.
-
+Learning Approach
+As a first-time programmer, I'm using the Feynman technique daily (morning and evening) to explain each part of the code to myself for deeper understanding. While I'm confident in my understanding, I'm always looking to refine my knowledge.
+I'm thoroughly enjoying this career change. Studying from when I wake up at 5 to bed time. Whilst working full time. 
