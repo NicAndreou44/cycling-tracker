@@ -3,7 +3,7 @@
 ## Project Overview
 Thanks for visiting my Cycling Tracker project! This README reflects the current state of the project as of April 28, 2025.
 
-I'm building a feature-rich backend with Node.js and Express, implementing JWT authentication, validated via ZOD schema, and using AWS DynamoDB for data storage.
+I'm building a backend with Node.js and Express, implementing JWT authentication, validated via ZOD schema, and using AWS DynamoDB for data storage.
 
 The project aims to create a thorough platform for tracking physical activities, with a focus on cycling. The long-term vision includes a login system for real-world use, allowing users to track all their physical activities, gain insights, and find motivation for healthier lifestyles through personalized storytelling.
 
