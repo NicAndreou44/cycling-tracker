@@ -29,11 +29,13 @@
     "supertest": "^7.1.0",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "dev": "ts-node src/server.ts",
+    "dev": "ts-node -r tsconfig-paths/register src/server.ts",
     "start": "tsc && node dist/server.js",
     "test": "jest --detectOpenHandles --forceExit"
-  }
+  },
+  "type": "commonjs"
 }

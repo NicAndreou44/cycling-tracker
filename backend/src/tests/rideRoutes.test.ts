@@ -1,12 +1,11 @@
-import request from 'supertest';
-import app from '../server';
-import db from '../config/testDb';
+const request = require('supertest');
+const app = require('../server');
+const pool = require('./utils/testDb');
 
-let token: string;
+let token;
 
 beforeAll(async () => {
-
-  await db.query(`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       email VARCHAR(100) UNIQUE NOT NULL,
@@ -14,8 +13,7 @@ beforeAll(async () => {
     );
   `);
 
- 
-  await db.query(`
+  await pool.query(`
     INSERT INTO users (email, password)
     VALUES ('admin@example.com', '$2b$10$QnJ3pTle7fCKlx1q0zHgLOV48xYIjo61J20UzMmkxLRjc6z9Yj8dO')
     ON CONFLICT (email) DO NOTHING;
@@ -33,11 +31,11 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await db.query("DELETE FROM rides");
+  await pool.query("DELETE FROM rides");
 });
 
 afterAll(async () => {
-  await db.end();
+  await pool.end();
 });
 
 describe("POST /api/rides with Zod middleware", () => {

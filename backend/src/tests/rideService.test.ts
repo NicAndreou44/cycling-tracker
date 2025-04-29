@@ -1,15 +1,9 @@
-import {
-  getRides,
-  addRide,
-  getRideById,
-  updateRideById,
-  deleteRideById,
-} from "../services/rideService";
-import db from "../config/testDb";
+const { getRides, addRide, getRideById, updateRideById, deleteRideById } = require("../services/rideService");
+const pool = require("./utils/testDb");
 
 beforeEach(async () => {
-  await db.query("DELETE FROM rides");
-  await db.query(`
+  await pool.query("DELETE FROM rides");
+  await pool.query(`
     INSERT INTO rides (name, distance_km, duration_minutes, type, notes)
     VALUES
       ('Morning Ride', 18, 60, 'cycling', 'Morning routine'),
@@ -23,7 +17,7 @@ describe("getRides", () => {
     const rides = await getRides();
     expect(rides).toHaveLength(3);
   });
-
+  
   test("first ride should be named 'Morning Ride'", async () => {
     const rides = await getRides();
     expect(rides[0].name).toBe("Morning Ride");
@@ -52,7 +46,7 @@ describe("getRideById", () => {
     const ride = await getRideById(rides[0].id);
     expect(ride.name).toBe("Morning Ride");
   });
-
+  
   test("should throw an error when ID does not exist", async () => {
     await expect(getRideById(9999)).rejects.toThrow("Ride not found");
   });
@@ -72,7 +66,7 @@ describe("deleteRideById", () => {
     const rides = await getRides();
     expect(rides.find((r) => r.id === added.id)).toBeUndefined();
   });
-
+  
   test("should throw an error if the ID does not exist", async () => {
     await expect(deleteRideById(9999)).rejects.toThrow("Ride not found");
   });
@@ -87,7 +81,6 @@ describe("updateRideById", () => {
       type: "cycling",
       notes: "Old"
     });
-
     const updated = await updateRideById(added.id, {
       name: "Updated Ride",
       distanceKm: 10,
@@ -98,7 +91,7 @@ describe("updateRideById", () => {
     expect(updated.name).toBe("Updated Ride");
     expect(updated.distanceKm).toBe(10);
   });
-
+  
   test("should throw an error if the ride is not found", async () => {
     await expect(
       updateRideById(99999, {
@@ -111,6 +104,7 @@ describe("updateRideById", () => {
     ).rejects.toThrow("Ride not found");
   });
 });
+
 afterAll(async () => {
-  await db.end(); 
+  await pool.end();
 });
