@@ -3,7 +3,7 @@
 ## Project Overview
 Thanks for visiting my Cycling Tracker project! This README reflects the current state of the project as of April 28, 2025.
 
-I'm building a backend with Node.js and Express, implementing JWT authentication, validated via ZOD schema, and using AWS DynamoDB for data storage.
+I'm building a backend with  Node.js, TS and Express, implementing JWT authentication, validated via ZOD schema, and using AWS DynamoDB for data storage.
 
 The project aims to create a thorough platform for tracking physical activities, with a focus on cycling. The long-term vision includes a login system for real-world use, allowing users to track all their physical activities, gain insights, and find motivation for healthier lifestyles through personalized storytelling.
 
@@ -30,13 +30,13 @@ Then check health endpoint at: http://localhost:3000/health
 - Delete Ride: DELETE http://localhost:3000/api/rides/:id
 
 ## Current Tech Stack
-- Backend: Node.js (18+) & Express.js
+- Backend: Node.js (18+) & TS & Express.js
 - Validation: Zod
 - Authentication: JWT
 - Database: AWS DynamoDB
 - Testing:
   - E2E Testing: Cypress
-  - Unit Testing: Jest
+  - Unit Testing: Vitest 
 - CI/CD: GitHub Actions
 
 ## Current Features
@@ -44,7 +44,7 @@ Then check health endpoint at: http://localhost:3000/health
 - JWT secured endpoints
 - DynamoDB integration
 - Comprehensive test coverage:
-  - Jest unit tests for Schema, services, and route level
+  - Vitest unit tests for Schema, services, and route level
   - Cypress API tests covering authentication, create, read, and delete flows
 - CI pipelines for automated testing
 
