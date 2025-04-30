@@ -1,8 +1,8 @@
 import type { RequestHandler } from "express";
 import bcrypt from "bcrypt";
-import { loginSchema } from "../validation/authSchema";
-import { findUserByEmail, createUser } from "../services/postgres/authService";
-import { generateToken } from "../services/authservices";
+import { loginSchema } from "../validation/authSchema.js";
+import { findUserByEmail, createUser } from "../services/postgres/authService.js";
+import { generateToken } from "../services/authservices.js";
 
 export const registerUser: RequestHandler = async (req, res): Promise<void> => {
   try {

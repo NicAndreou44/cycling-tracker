@@ -1,6 +1,6 @@
 
-import pool from "../config/db";
-import { Ride, RideInput } from "../types/Rides";
+import pool from "../config/db.js";
+import { Ride, RideInput } from "../types/Rides.js";
 
 type DbRow = {
   id: number;

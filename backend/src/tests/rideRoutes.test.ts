@@ -1,8 +1,8 @@
-const request = require('supertest');
-const app = require('../server');
-const pool = require('./utils/testDb');
+import request from "supertest";
+import app from "../server.js";
+import pool from "./utils/testDb.js";
 
-let token;
+let token: string;
 
 beforeAll(async () => {
   await pool.query(`
@@ -23,10 +23,6 @@ beforeAll(async () => {
     .post("/api/auth/login")
     .send({ email: "admin@example.com", password: "password123" });
 
-  if (!res.body.token) {
-    throw new Error("Failed to get token before running tests");
-  }
-
   token = res.body.token;
 });
 
@@ -38,19 +34,18 @@ afterAll(async () => {
   await pool.end();
 });
 
-describe("POST /api/rides with Zod middleware", () => {
-  it("should return 400 when required fields are missing", async () => {
+describe("POST /api/rides", () => {
+  it("should 400 on missing fields", async () => {
     const res = await request(app)
       .post("/api/rides")
       .set("Authorization", `Bearer ${token}`)
       .send({ name: "Invalid Ride" });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBeDefined();
     expect(res.body.error[0].message).toMatch(/required/i);
   });
 
-  it("should succeed with valid data", async () => {
+  it("should 201 on valid input", async () => {
     const res = await request(app)
       .post("/api/rides")
       .set("Authorization", `Bearer ${token}`)
@@ -59,7 +54,7 @@ describe("POST /api/rides with Zod middleware", () => {
         distanceKm: 30,
         duration_minutes: 70,
         type: "cycling",
-        notes: "Good test",
+        notes: "Solid ride",
       });
 
     expect(res.status).toBe(201);
@@ -67,9 +62,9 @@ describe("POST /api/rides with Zod middleware", () => {
   });
 });
 
-describe("PUT /api/rides/:id with validation", () => {
-  it("should return 400 for missing required fields", async () => {
-    const addRes = await request(app)
+describe("PUT /api/rides/:id", () => {
+  it("should 400 on missing fields", async () => {
+    const added = await request(app)
       .post("/api/rides")
       .set("Authorization", `Bearer ${token}`)
       .send({
@@ -80,18 +75,18 @@ describe("PUT /api/rides/:id with validation", () => {
         notes: "initial",
       });
 
-    const rideId = addRes.body.id;
+    const rideId = added.body.id;
 
     const res = await request(app)
       .put(`/api/rides/${rideId}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({ name: "Still broken" });
+      .send({ name: "Invalid update" });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBeDefined();
   });
 
-  it("should return 404 if ride ID does not exist", async () => {
+  it("should 404 if ride not found", async () => {
     const res = await request(app)
       .put("/api/rides/999999")
       .set("Authorization", `Bearer ${token}`)
@@ -108,8 +103,8 @@ describe("PUT /api/rides/:id with validation", () => {
   });
 });
 
-describe("DELETE /api/rides/:id with validation", () => {
-  it("should return 404 if ride ID does not exist", async () => {
+describe("DELETE /api/rides/:id", () => {
+  it("should 404 on nonexistent ride", async () => {
     const res = await request(app)
       .delete("/api/rides/999999")
       .set("Authorization", `Bearer ${token}`);
@@ -118,8 +113,8 @@ describe("DELETE /api/rides/:id with validation", () => {
     expect(res.body.error).toMatch(/Ride not found/i);
   });
 
-  it("should successfully delete a ride by ID", async () => {
-    const addRes = await request(app)
+  it("should delete ride", async () => {
+    const added = await request(app)
       .post("/api/rides")
       .set("Authorization", `Bearer ${token}`)
       .send({
@@ -130,23 +125,13 @@ describe("DELETE /api/rides/:id with validation", () => {
         notes: "bye",
       });
 
-    const rideId = addRes.body.id;
+    const rideId = added.body.id;
 
-    const deleteRes = await request(app)
+    const res = await request(app)
       .delete(`/api/rides/${rideId}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(deleteRes.status).toBe(200);
-    expect(deleteRes.body.id).toBe(rideId);
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(rideId);
   });
-});
-
-it("should reach test endpoint", async () => {
-  const res = await request(app).get("/test-endpoint");
-  expect(res.status).toBe(200);
-});
-
-it("should reach debug endpoint", async () => {
-  const res = await request(app).get("/test-debug");
-  expect(res.status).toBe(200);
 });

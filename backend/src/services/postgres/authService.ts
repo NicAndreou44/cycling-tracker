@@ -1,4 +1,5 @@
-import pool from "@/config/db";
+import pool from "../../db/index.js"; 
+
 
 
 

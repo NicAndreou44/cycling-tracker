@@ -1,6 +1,6 @@
 
 import { RequestHandler } from "express";
-import { rideSchema }     from "../validation/rideSchema";
+import { rideSchema }     from "../validation/rideSchema.js";
 
 export const validateRideData: RequestHandler = (req, res, next) => {
   try {

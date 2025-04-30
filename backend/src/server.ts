@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import authRouter from "./routes/auth";
-import ridesRouter from "./routes/rides";
+import authRouter from "./routes/auth.js";
+import ridesRouter from "./routes/rides.js";
 
 dotenv.config();
 

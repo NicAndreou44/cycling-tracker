@@ -1,5 +1,5 @@
 import { Request, RequestHandler } from "express";
-import { getRideById } from "../services/rideService";
+import { getRideById } from "../services/rideService.js";
 
 
 interface RideRequest extends Request {

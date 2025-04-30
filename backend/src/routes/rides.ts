@@ -4,10 +4,10 @@ import {
   addRide,
   updateRideById,
   deleteRideById,
-} from "../services/rideService";
-import { validateRideData } from "../middleware/validateRideData";
-import { validateRideId } from "../middleware/validateRideId";
-import { authenticateJWT } from "../middleware/authmiddleware";
+} from "../services/rideService.js";
+import { validateRideData } from "../middleware/validateRideData.js";
+import { validateRideId } from "../middleware/validateRideId.js";
+import { authenticateJWT } from "../middleware/authmiddleware.js";
 
 const router = Router();
 router.use(authenticateJWT);
