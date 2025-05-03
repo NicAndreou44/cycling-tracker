@@ -1,0 +1,11 @@
+node_modules
+.env
+.git
+.gitignore
+README.md
+dist
+coverage
+.npm
+.cache
+.idea
+.vscode

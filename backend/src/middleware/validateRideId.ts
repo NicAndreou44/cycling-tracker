@@ -1,18 +1,17 @@
-import { Request, RequestHandler } from "express";
-import { getRideById } from "../services/rideService.js";
+import { Request, Response, NextFunction } from "express";
 
-
-interface RideRequest extends Request {
-  ride?: any;
-}
-
-export const validateRideId: RequestHandler = async (req, res, next) => {
+export const validateRideId = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   const id = Number(req.params.id);
-  try {
-    const ride = await getRideById(id);
-    (req as RideRequest).ride = ride; 
-    next();
-  } catch {
-    res.status(404).json({ error: "Ride not found" });
+
+  if (!id || isNaN(id)) {
+    res.status(400).json({ error: "Invalid ride ID" });
+    return;
   }
+
+  next();
+  return;
 };

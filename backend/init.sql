@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS rides (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  distance_km INTEGER NOT NULL,
+  duration_minutes INTEGER,
+  type VARCHAR(50),
+  notes TEXT,
+  user_id INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+INSERT INTO users (email, password) 
+VALUES ('admin@example.com', '$2b$10$QnJ3pTle7fCKlx1q0zHgLOV48xYIjo61J20UzMmkxLRjc6z9Yj8dO')
+ON CONFLICT (email) DO NOTHING;

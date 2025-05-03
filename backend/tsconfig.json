@@ -6,17 +6,17 @@
     "rootDir": "src",
     "outDir": "dist",
     "baseUrl": "src",
-    "paths": { "@/*": ["*"] },
+    "paths": {
+      "@/*": ["*"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    
     "types": ["node", "vitest/globals"]
   },
- 
   "include": ["src/**/*.ts", "src/tests/**/*.ts"],
   "exclude": ["node_modules", "dist", "cypress"]
 }

@@ -8,7 +8,7 @@ import {
 } from '../services/rideService.js';
 
 beforeEach(async () => {
-  // clear and seed
+  
   await pool.query('DELETE FROM rides');
   await pool.query(`
     INSERT INTO rides (name, distance_km, duration_minutes, type, notes)

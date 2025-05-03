@@ -1,4 +1,3 @@
-
 import pool from "../config/db.js";
 import { Ride, RideInput } from "../types/Rides.js";
 
