@@ -1,120 +1,52 @@
-import pool from "../config/db.js";
-import { Ride, RideInput } from "../types/Rides.js";
+import { PrismaClient, Ride } from "@prisma/client";
+import type { CreateRideInput, UpdateRideInput } from "../validation/rideSchema.js";
 
-type DbRow = {
-  id: number;
-  name: string;
-  distance_km: number;
-  duration_minutes: number | null;
-  type: string | null;
-  notes: string | null;
-};
+const prisma = new PrismaClient();
 
 export const getRides = async (): Promise<Ride[]> => {
-  const { rows } = await pool.query<DbRow>(
-    "SELECT * FROM rides ORDER BY id ASC"
-  );
-  return rows.map(r => ({
-    id:               r.id,
-    name:             r.name,
-    distanceKm:       r.distance_km,
-    duration_minutes: r.duration_minutes ?? undefined,
-    type:             r.type             ?? undefined,
-    notes:            r.notes            ?? undefined,
-  }));
+  return prisma.ride.findMany({
+    orderBy: { id: "asc" },
+  });
 };
 
-export const addRide = async (input: RideInput): Promise<Ride> => {
-  const { name, distanceKm, duration_minutes, type, notes } = input;
-  const { rows } = await pool.query<DbRow>(
-    `INSERT INTO rides
-       (name, distance_km, duration_minutes, type, notes)
-     VALUES ($1,$2,$3,$4,$5)
-     RETURNING *`,
-    [
-      name,
-      distanceKm,
-      duration_minutes ?? null,
-      type             ?? null,
-      notes            ?? null,
-    ]
-  );
-  const r = rows[0];
-  return {
-    id:               r.id,
-    name:             r.name,
-    distanceKm:       r.distance_km,
-    duration_minutes: r.duration_minutes ?? undefined,
-    type:             r.type             ?? undefined,
-    notes:            r.notes            ?? undefined,
-  };
+export const addRide = async (input: CreateRideInput): Promise<Ride> => {
+  return prisma.ride.create({ data: input });
 };
 
-export const getRideById = async (id: number): Promise<Ride> => {
-  const { rows } = await pool.query<DbRow>(
-    "SELECT * FROM rides WHERE id = $1",
-    [id]
-  );
-  if (rows.length === 0) throw new Error("Ride not found");
-  const r = rows[0];
-  return {
-    id:               r.id,
-    name:             r.name,
-    distanceKm:       r.distance_km,
-    duration_minutes: r.duration_minutes ?? undefined,
-    type:             r.type             ?? undefined,
-    notes:            r.notes            ?? undefined,
-  };
+export const getRideById = async (id: number): Promise<Ride | null> => {
+  const ride = await prisma.ride.findUnique({
+    where: { id },
+  });
+  if (!ride) throw new Error(`Ride with ID ${id} not found`);
+  return ride;
 };
 
 export const updateRideById = async (
   id: number,
-  input: RideInput
+  input: UpdateRideInput
 ): Promise<Ride> => {
-  const { name, distanceKm, duration_minutes, type, notes } = input;
-  const { rows } = await pool.query<DbRow>(
-    `UPDATE rides
-        SET name=$1,
-            distance_km=$2,
-            duration_minutes=$3,
-            type=$4,
-            notes=$5
-      WHERE id=$6
-      RETURNING *`,
-    [
-      name,
-      distanceKm,
-      duration_minutes ?? null,
-      type             ?? null,
-      notes            ?? null,
-      id
-    ]
-  );
-  if (rows.length === 0) throw new Error("Ride not found");
-  const r = rows[0];
-  return {
-    id:               r.id,
-    name:             r.name,
-    distanceKm:       r.distance_km,
-    duration_minutes: r.duration_minutes ?? undefined,
-    type:             r.type             ?? undefined,
-    notes:            r.notes            ?? undefined,
-  };
+  try {
+    return await prisma.ride.update({
+      where: { id },
+      data: input,
+    });
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      throw new Error(`Ride with ID ${id} not found for update`);
+    }
+    throw err;
+  }
 };
 
-export const deleteRideById = async (id: number): Promise<Ride> => {
-  const { rows } = await pool.query<DbRow>(
-    "DELETE FROM rides WHERE id = $1 RETURNING *",
-    [id]
-  );
-  if (rows.length === 0) throw new Error("Ride not found");
-  const r = rows[0];
-  return {
-    id:               r.id,
-    name:             r.name,
-    distanceKm:       r.distance_km,
-    duration_minutes: r.duration_minutes ?? undefined,
-    type:             r.type             ?? undefined,
-    notes:            r.notes            ?? undefined,
-  };
+export const deleteRideById = async (id: number): Promise<{ id: number }> => {
+  try {
+    return await prisma.ride.delete({
+      where: { id },
+    });
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      throw new Error(`Ride with ID ${id} not found for deletion`);
+    }
+    throw err;
+  }
 };

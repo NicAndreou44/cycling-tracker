@@ -1,4 +1,4 @@
-
+// backend/src/routes/rides.ts
 import { Router } from "express";
 import {
   getAllRides,
@@ -6,20 +6,16 @@ import {
   getRideDetails,
   updateRide,
   deleteRide,
-} from "../controllers/ridesController.js"; 
-import { validateRideData } from "../middleware/validateRideData.js";
-import { validateRideId } from "../middleware/validateRideId.js";
-import { authenticateJWT } from "../middleware/authmiddleware.js";
+} from "../controllers/ridesController.js";
+import { requireAuth } from "../middleware/requireAuth.js";
+import { validateIdParam } from "../middleware/validateIdparam.js";  
 
 const router = Router();
 
-router.use(authenticateJWT);
-
-
-router.get("/", getAllRides);
-router.post("/", validateRideData, createRide);
-router.get("/:id", validateRideId, getRideDetails);
-router.put("/:id", validateRideId, validateRideData, updateRide);
-router.delete("/:id", validateRideId, deleteRide);
+router.get    ("/",    requireAuth, getAllRides);
+router.post   ("/",    requireAuth, createRide);
+router.get    ("/:id", requireAuth, validateIdParam("id"), getRideDetails);
+router.put    ("/:id", requireAuth, validateIdParam("id"), updateRide);
+router.delete ("/:id", requireAuth, validateIdParam("id"), deleteRide);
 
 export default router;

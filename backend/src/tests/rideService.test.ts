@@ -11,11 +11,11 @@ beforeEach(async () => {
   
   await pool.query('DELETE FROM rides');
   await pool.query(`
-    INSERT INTO rides (name, distance_km, duration_minutes, type, notes)
+    INSERT INTO rides (name, distance_km, duration_minutes, type, notes, user_id)
     VALUES
-      ('Morning Ride', 18, 60, 'cycling', 'Morning routine'),
-      ('Evening Ride', 22, 75, 'cycling', 'Evening cooldown'),
-      ('City Ride', 12, 40, 'cycling', 'Errands')
+      ('Morning Ride', 18, 60, 'cycling', 'Morning routine', 1),
+      ('Evening Ride', 22, 75, 'cycling', 'Evening cooldown', 1),
+      ('City Ride', 12, 40, 'cycling', 'Errands', 1)
   `);
 });
 
@@ -43,6 +43,7 @@ describe('Ride Service – addRide()', () => {
       duration_minutes: 50,
       type: 'cycling',
       notes: 'Test notes',
+      userId: 1, 
     };
     const added = await addRide(newRide);
     expect(added).toHaveProperty('id');
@@ -55,7 +56,8 @@ describe('Ride Service – getRideById()', () => {
   it('fetches the correct ride', async () => {
     const rides = await getRides();
     const ride = await getRideById(rides[0].id);
-    expect(ride.name).toBe('Morning Ride');
+    expect(ride).toBeDefined(); 
+    expect(ride!.name).toBe('Morning Ride');
   });
 
   it('throws if ID does not exist', async () => {
@@ -71,6 +73,7 @@ describe('Ride Service – updateRideById()', () => {
       duration_minutes: 15,
       type: 'cycling',
       notes: 'Old',
+      userId: 1, 
     });
     const updated = await updateRideById(added.id, {
       name: 'Updated Ride',
@@ -78,6 +81,7 @@ describe('Ride Service – updateRideById()', () => {
       duration_minutes: 15,
       type: 'cycling',
       notes: 'Still old',
+      userId: 1, 
     });
     expect(updated.name).toBe('Updated Ride');
     expect(updated.distanceKm).toBe(10);
@@ -91,6 +95,7 @@ describe('Ride Service – updateRideById()', () => {
         duration_minutes: 1,
         type: 'cycling',
         notes: 'X',
+        userId: 1, 
       })
     ).rejects.toThrow('Ride not found');
   });
@@ -104,6 +109,7 @@ describe('Ride Service – deleteRideById()', () => {
       duration_minutes: 20,
       type: 'cycling',
       notes: 'Delete test',
+      userId: 1, 
     });
     const deleted = await deleteRideById(added.id);
     expect(deleted.id).toBe(added.id);
