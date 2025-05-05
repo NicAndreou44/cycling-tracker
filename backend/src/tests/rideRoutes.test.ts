@@ -16,6 +16,7 @@ describe("Ride Routes Tests", () => {
   beforeAll(async () => {
     const email = 'test-user@example.com';
     const plainPassword = 'password123';
+
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
     
