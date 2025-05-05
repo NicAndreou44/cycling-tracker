@@ -14,21 +14,23 @@ function generateTestToken(userId: number): string {
 
 describe("Ride Routes Tests", () => {
   beforeAll(async () => {
-    const hashedPassword = await bcrypt.hash("password123", 10);
+    const email = 'test-user@example.com';
+    const plainPassword = 'password123';
+    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
+    
+    await pool.query(`
+      INSERT INTO users (email, password)
+      VALUES ($1, $2)
+      ON CONFLICT (email) DO NOTHING
+    `, [email, hashedPassword]);
 
     const userResult = await pool.query(
-      "SELECT id FROM users WHERE email = 'test-user@example.com'"
+      "SELECT id FROM users WHERE email = $1",
+      [email]
     );
-    if (userResult.rows.length === 0) {
-      const result = await pool.query(
-        `INSERT INTO users (email, password) VALUES ('test-user@example.com', $1) RETURNING id`,
-        [hashedPassword]
-      );
-      userId = result.rows[0].id;
-    } else {
-      userId = userResult.rows[0].id;
-    }
 
+    userId = userResult.rows[0].id;
     token = generateTestToken(userId);
 
     console.log("Test User ID:", userId);
