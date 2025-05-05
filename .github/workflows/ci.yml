@@ -1,4 +1,4 @@
-name: CI - Docker Compose Full Stack
+name: CI - Node.js backend with Postgres
 
 on:
   push:
@@ -7,20 +7,34 @@ on:
     branches: [main]
 
 jobs:
-  e2e-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - name: Run full stack tests via Docker Compose
+      - name: Set up Docker Compose
+        run: docker compose version
+
+      - name: Start services with Docker Compose
+        run: docker compose -f backend/docker-compose.yml up -d
+
+      - name: Wait for Postgres to be ready
         run: |
-          docker-compose -f backend/docker-compose.yml up --build --abort-on-container-exit
+          until docker exec backend-db-1 pg_isready -U postgres; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
 
-      - name: Cleanup
+      - name: Run tests
+        run: docker exec backend-app-1 npm test
+
+      - name: Tear down Docker Compose
         if: always()
-        run: docker-compose -f backend/docker-compose.yml down --volumes
+        run: docker compose -f backend/docker-compose.yml down --volumes
