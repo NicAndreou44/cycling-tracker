@@ -3,18 +3,29 @@
 describe('Rides API', () => {
   let token: string;
   let createdRideId: number;
-
+  
   before(() => {
-    cy.request('POST', '/api/auth/login', {
-      email: 'admin@example.com',
-      password: 'password123',
+    cy.request({
+      method: 'POST',
+      url: '/api/auth/login',
+      body: {
+        email: 'test-user@example.com', 
+        password: 'password123',
+      },
+      failOnStatusCode: false 
     }).then((response) => {
+      
+      if (response.status !== 200) {
+        cy.log(`Auth failed with status: ${response.status}`);
+        cy.log(`Response body: ${JSON.stringify(response.body)}`);
+      }
+      
       expect(response.status).to.eq(200);
       token = response.body.token;
       expect(token).to.exist;
     });
   });
-
+  
   it('should create a new ride', () => {
     cy.request({
       method: 'POST',
@@ -35,7 +46,7 @@ describe('Rides API', () => {
       createdRideId = response.body.id;
     });
   });
-
+  
   it('should fetch all rides', () => {
     cy.request({
       method: 'GET',
@@ -48,18 +59,16 @@ describe('Rides API', () => {
       expect(response.body).to.have.property('rides');
       expect(response.body.rides).to.be.an('array');
       expect(response.body.rides.length).to.be.greaterThan(0);
-
       const ride = response.body.rides.find((r: any) => r.id === createdRideId);
       expect(ride).to.exist;
     });
   });
-
+  
   it('should delete the created ride', () => {
     if (!createdRideId) {
       cy.log('Skipping delete test because ride creation failed');
       return;
     }
-
     cy.request({
       method: 'DELETE',
       url: `/api/rides/${createdRideId}`,
@@ -67,7 +76,7 @@ describe('Rides API', () => {
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
-      expect(response.status).to.eq(204); 
+      expect(response.status).to.eq(204);
     });
   });
 });
