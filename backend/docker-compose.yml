@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: cycling_tracker
     ports:
-      - "5432:5432"
+      - "5433:5432"  # ✅ Keep this to avoid local conflicts
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -33,6 +33,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
+
+  cypress:
+    image: cypress/included:12.17.4
+    depends_on:
+      - app
+    working_dir: /e2e
+    volumes:
+      - .:/e2e  
+    environment:
+      CYPRESS_baseUrl: http://app:3000
+    command: ["cypress", "run"]
     networks:
       - app-network
 

@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "target": "ES2020",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "types": ["cypress", "node"],
+      "strict": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "skipLibCheck": true
+    },
+    "include": ["cypress/**/*.ts"]
+  }

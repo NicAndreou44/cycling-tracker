@@ -1,4 +1,4 @@
-// backend/src/routes/rides.ts
+
 import { Router } from "express";
 import {
   getAllRides,
@@ -8,7 +8,7 @@ import {
   deleteRide,
 } from "../controllers/ridesController.js";
 import { requireAuth } from "../middleware/requireAuth.js";
-import { validateIdParam } from "../middleware/validateIdparam.js";  
+import { validateIdParam } from "../middleware/validateidparam.js";  
 
 const router = Router();
 

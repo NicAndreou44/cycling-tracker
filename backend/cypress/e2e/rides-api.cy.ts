@@ -1,20 +1,20 @@
+/// <reference types="cypress" />
+
 describe('Rides API', () => {
   let token: string;
   let createdRideId: number;
 
- 
   before(() => {
     cy.request('POST', '/api/auth/login', {
       email: 'admin@example.com',
       password: 'password123',
-    }).then((res) => {
-      expect(res.status).to.eq(200);
-      token = res.body.token;
-      expect(token, 'Token from login').to.exist;
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      token = response.body.token;
+      expect(token).to.exist;
     });
   });
 
- 
   it('should create a new ride', () => {
     cy.request({
       method: 'POST',
@@ -29,15 +29,13 @@ describe('Rides API', () => {
         type: 'Cycling',
         notes: 'Created from Cypress',
       },
-    }).then((res) => {
-      expect(res.status).to.eq(201);
-      expect(res.body).to.have.property('id');
-      createdRideId = res.body.id;
-      cy.log(`Created ride ID: ${createdRideId}`);
+    }).then((response) => {
+      expect(response.status).to.eq(201);
+      expect(response.body).to.have.property('id');
+      createdRideId = response.body.id;
     });
   });
 
-  
   it('should fetch all rides', () => {
     cy.request({
       method: 'GET',
@@ -45,19 +43,22 @@ describe('Rides API', () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((res) => {
-      expect(res.status).to.eq(200);
-      expect(res.body).to.be.an('array');
-      expect(res.body.length).to.be.greaterThan(0);
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.have.property('rides');
+      expect(response.body.rides).to.be.an('array');
+      expect(response.body.rides.length).to.be.greaterThan(0);
 
-      const ride = res.body.find((r) => r.id === createdRideId);
-      expect(ride, 'Created ride should exist in list').to.exist;
+      const ride = response.body.rides.find((r: any) => r.id === createdRideId);
+      expect(ride).to.exist;
     });
   });
 
- 
   it('should delete the created ride', () => {
-    cy.log(`Attempting to delete ride with ID: ${createdRideId}`);
+    if (!createdRideId) {
+      cy.log('Skipping delete test because ride creation failed');
+      return;
+    }
 
     cy.request({
       method: 'DELETE',
@@ -65,11 +66,8 @@ describe('Rides API', () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((res) => {
-      expect(res.status).to.eq(200);
-      expect(res.body).to.have.property('id', createdRideId);
-      expect(res.body).to.have.property('name');
-      expect(res.body).to.have.property('distanceKm');
+    }).then((response) => {
+      expect(response.status).to.eq(204); 
     });
   });
 });

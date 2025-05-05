@@ -1,7 +1,18 @@
 import dotenv from "dotenv";
-import pkg from "pg";
-dotenv.config();
 
+
+dotenv.config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
+
+
+console.log("[DB CONFIG] USER:", process.env.DB_USER);
+console.log("[DB CONFIG] PASSWORD:", process.env.DB_PASSWORD);
+console.log("[DB CONFIG] HOST:", process.env.DB_HOST);
+console.log("[DB CONFIG] NAME:", process.env.DB_NAME);
+console.log("[DB CONFIG] PORT:", process.env.DB_PORT);
+
+import pkg from "pg";
 const { Pool } = pkg;
 
 const pool = new Pool({
