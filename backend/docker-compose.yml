@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: cycling_tracker
     ports:
-      - "5433:5432"  # ✅ Keep this to avoid local conflicts
+      - "5433:5432"  
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
